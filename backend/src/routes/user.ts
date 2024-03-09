@@ -11,36 +11,52 @@ export const userRouter = new Hono<{
 }>();
 
 
-userRouter.post('/api/v1/user/signup', async(c) => {
-    const prisma = new PrismaClient({
-          datasourceUrl: c.env?.DATABASE_URL,
-      }).$extends(withAccelerate());
-    const body: {
-      name: string;
-      email: string;
-      password: string
-    } = await c.req.json()
-      try {
-          const user = await prisma.user.create({
+userRouter.post('/signup', async (c) => {
+  const prisma = new PrismaClient({
+     datasourceUrl: c.env.DATABASE_URL,
+  }).$extends(withAccelerate())
+    const body = await c.req.json();
+    // const { success } = signupInput.safeParse(body);
+    // if (!success) {
+    //     c.status(411);
+    //     return c.json({
+    //         message: "Inputs not correct"
+    //     })
+    // }
+  
+    try {
+      const user = await prisma.user.create({
         data: {
           name: body.name,
           email: body.email,
           password: body.password
         }
       })
-      const jwt = await sign({id:user.id},c.env.JWT_SECRET)
-      
-          return c.json({jwt})
-      } catch(e) {
-          return c.status(403);
-      }
+      const jwt = await sign({
+        id: user.id
+      }, c.env.JWT_SECRET);
+  
+      return c.text(jwt)
+    } catch(e) {
+      console.log(e);
+      c.status(411);
+      return c.text('Invalid')
+    }
   })
   
-  userRouter.post('/api/v1/user/signin',async (c) => {
+  
+  userRouter.post('/signin',async (c) => {
     const prisma = new PrismaClient({
       datasourceUrl: c.env?.DATABASE_URL,
     }).$extends(withAccelerate());
+    
     const body:{email:string,password:string} = await c.req.json();
+    // const body = await c.req.json();
+	  // const { success } = signinInput.safeParse(body);
+	  // if (!success) {
+		//   c.status(400);
+		//   return c.json({ error: "invalid input" });
+	  // }
     try {
       const user = await prisma.user.findUnique({
         where: {
@@ -48,7 +64,7 @@ userRouter.post('/api/v1/user/signup', async(c) => {
         }
       })
       if(user?.password === body.password) {
-        const jwt = await sign({id:user.id}, c.env.JWT_SECRET)
+        const jwt = await sign({id:user.id}, '123456789')
         return c.json({jwt})
       }
     } catch (error) {

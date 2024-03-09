@@ -1,8 +1,9 @@
 name = "medium"
 compatibility_date = "2023-12-01"
 
-# [vars]
+[vars]
 DATABASE_URL="prisma://accelerate.prisma-data.net/?api_key=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlfa2V5IjoiMGJmMGJhNDYtYTJhZi00OGJkLTk4NGItOWJhZGVmMWVlNmFjIiwidGVuYW50X2lkIjoiN2QyNmM0YTgzODBkNzYxOWE0NTA4NGY0NjhjNTgwMTdjNzBhODExYWNiNGI1MGM3NmJiMTdjZGI5OTBhNTA4OCIsImludGVybmFsX3NlY3JldCI6IjcwZTIxZDFmLTVjMjctNGIzZS05NmQzLTNlYmRhYTg1YWY1OSJ9.g0tfwOnIPw8-DQLTe4IatBsYUBecUj6ROU3tve7mwIQ"
+JWT_SECRET="123456789"
 
 # MY_VARIABLE = "production_value"
 
