@@ -1,3 +1,4 @@
+import { signinInput, signupInput } from '@divya247/medium-app';
 import { PrismaClient } from '@prisma/client/edge'
 import { withAccelerate } from '@prisma/extension-accelerate'
 import { Hono } from 'hono';
@@ -16,13 +17,13 @@ userRouter.post('/signup', async (c) => {
      datasourceUrl: c.env.DATABASE_URL,
   }).$extends(withAccelerate())
     const body = await c.req.json();
-    // const { success } = signupInput.safeParse(body);
-    // if (!success) {
-    //     c.status(411);
-    //     return c.json({
-    //         message: "Inputs not correct"
-    //     })
-    // }
+    const { success } = signupInput.safeParse(body);
+    if (!success) {
+        c.status(411);
+        return c.json({
+            message: "Inputs not correct"
+        })
+    }
   
     try {
       const user = await prisma.user.create({
@@ -50,13 +51,13 @@ userRouter.post('/signup', async (c) => {
       datasourceUrl: c.env?.DATABASE_URL,
     }).$extends(withAccelerate());
     
-    const body:{email:string,password:string} = await c.req.json();
-    // const body = await c.req.json();
-	  // const { success } = signinInput.safeParse(body);
-	  // if (!success) {
-		//   c.status(400);
-		//   return c.json({ error: "invalid input" });
-	  // }
+    // const body:{email:string,password:string} = await c.req.json();
+    const body = await c.req.json();
+	  const { success } = signinInput.safeParse(body);
+	  if (!success) {
+		  c.status(400);
+		  return c.json({ error: "invalid input" });
+	  }
     try {
       const user = await prisma.user.findUnique({
         where: {
@@ -64,7 +65,7 @@ userRouter.post('/signup', async (c) => {
         }
       })
       if(user?.password === body.password) {
-        const jwt = await sign({id:user.id}, '123456789')
+        const jwt = await sign({id:user?.id}, '123456789')
         return c.json({jwt})
       }
     } catch (error) {

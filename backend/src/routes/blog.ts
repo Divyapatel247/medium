@@ -1,3 +1,4 @@
+import { createPostInput, updatePostInput } from "@divya247/medium-app";
 import { PrismaClient } from "@prisma/client/edge";
 import { withAccelerate } from "@prisma/extension-accelerate";
 import { Hono } from "hono"
@@ -38,13 +39,13 @@ import { verify } from "hono/jwt";
 
   blogRouter.post('/', async (c) => {
     const userId = c.get('userId'); 
-    // const body = await c.req.json();
-	  // const { success } = createPostInput.safeParse(body);
-	  // if (!success) {
-		//   c.status(400);
-		//   return c.json({ error: "invalid input" });
-	  //  }
-    const body:{title:string,content:string,published:boolean} = await c.req.json()
+    const body = await c.req.json();
+	  const { success } = createPostInput.safeParse(body);
+	  if (!success) {
+		  c.status(400);
+		  return c.json({ error: "invalid input" });
+	   }
+    // const body:{title:string,content:string,published:boolean} = await c.req.json()
     const prisma = new PrismaClient({
       datasourceUrl: c.env.DATABASE_URL,  
     }).$extends(withAccelerate())
@@ -63,16 +64,16 @@ import { verify } from "hono/jwt";
 
   blogRouter.put('/', async(c) => {
     const userId = c.get('userId'); 
-    const body:{title:string,content:string,published:boolean,id:string} = await c.req.json()
+    // const body:{title:string,content:string,published:boolean,id:string} = await c.req.json()
     const prisma = new PrismaClient({
       datasourceUrl: c.env.DATABASE_URL,  
     }).$extends(withAccelerate())
-    // const body = await c.req.json();
-	  // const { success } = updatePostInput.safeParse(body);
-	  // if (!success) {
-		//   c.status(400);
-		//   return c.json({ error: "invalid input" });
-	  // }
+    const body = await c.req.json();
+	  const { success } = updatePostInput.safeParse(body);
+	  if (!success) {
+		  c.status(400);
+		  return c.json({ error: "invalid input" });
+	  }
 
     
     const post = await prisma.posts.update({
