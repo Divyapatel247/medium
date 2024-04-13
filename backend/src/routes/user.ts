@@ -66,7 +66,7 @@ userRouter.post('/signup', async (c) => {
       })
       if(user?.password === body.password) {
         const jwt = await sign({id:user?.id}, '123456789')
-        return c.json({jwt})
+        return c.text(jwt)
       }
     } catch (error) {
       return c.status(403);
